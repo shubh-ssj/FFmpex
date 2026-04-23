@@ -18,7 +18,7 @@
 - 🗂 **Job Queue** — Queue multiple jobs with live ETA tracking and desktop notifications on completion
 - 🖱 **Drag & Drop** — Drop files directly onto the window (requires optional `tkinterdnd2`)
 - 🎨 **Custom Themes** — Dracula, Nord, and more via CustomTkinter's theming engine
-- 📐 **Resolution Scaling** — 240p to 8K with smart `-2` padding to preserve aspect ratio
+- 📐 **Resolution Scaling** — 240p to 8K with smart padding to preserve aspect ratio
 
 ---
 
