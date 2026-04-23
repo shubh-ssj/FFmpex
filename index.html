@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FFmpex — Clean FFmpeg GUI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0c0d0f;
+      --bg2:      #111316;
+      --bg3:      #181b1f;
+      --border:   #222529;
+      --orange:   #ff6b1a;
+      --orange2:  #ff8c42;
+      --cyan:     #1affdb;
+      --dim:      #4a5160;
+      --text:     #d6dde8;
+      --text2:    #8a94a6;
+      --card:     #13151a;
+      --mono:     'Space Mono', monospace;
+      --sans:     'Syne', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: .45;
+    }
+
+    /* Topbar */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 52px; background: rgba(12,13,15,.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 2rem;
+    }
+    .topbar-logo { font-family: var(--mono); font-weight: 700; font-size: .88rem; color: var(--orange); letter-spacing: .06em; }
+    .topbar-logo span { color: var(--dim); }
+    .topbar-nav { display: flex; gap: 1.6rem; }
+    .topbar-nav a { color: var(--text2); text-decoration: none; font-size: .8rem; font-family: var(--mono); letter-spacing: .04em; transition: color .2s; }
+    .topbar-nav a:hover { color: var(--cyan); }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 6rem 2rem 4rem; position: relative;
+    }
+    .hero-glow {
+      position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse at center, rgba(255,107,26,.13) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; color: var(--orange);
+      background: rgba(255,107,26,.1); border: 1px solid rgba(255,107,26,.25);
+      border-radius: 2rem; padding: .35rem 1rem; margin-bottom: 2rem; display: inline-block;
+    }
+    .hero-title { font-size: clamp(4rem, 12vw, 9rem); font-weight: 800; line-height: .9; letter-spacing: -.03em; margin-bottom: .6rem; }
+    .hero-title .ff  { color: var(--orange); }
+    .hero-sub { font-family: var(--mono); font-size: clamp(.75rem, 1.5vw, .95rem); color: var(--text2); letter-spacing: .06em; margin-bottom: 1rem; }
+    .hero-desc { font-size: clamp(.95rem, 1.8vw, 1.15rem); color: var(--text2); max-width: 540px; line-height: 1.65; margin: 0 auto 2.8rem; }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.8rem; border-radius: 4px;
+      font-family: var(--mono); font-size: .82rem; font-weight: 700; letter-spacing: .06em;
+      text-decoration: none; transition: all .2s; cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--orange); color: #000; }
+    .btn-primary:hover { background: var(--orange2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,107,26,.35); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--dim); background: var(--bg3); transform: translateY(-2px); }
+
+    /* Terminal */
+    .terminal-wrap { margin: 4rem auto 0; max-width: 700px; width: 100%; }
+    .terminal { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,.6); }
+    .terminal-bar { background: var(--bg3); padding: .75rem 1rem; display: flex; align-items: center; gap: .5rem; border-bottom: 1px solid var(--border); }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+    .terminal-title { font-family: var(--mono); font-size: .72rem; color: var(--dim); margin-left: auto; margin-right: auto; }
+    .terminal-body { padding: 1.5rem; font-family: var(--mono); font-size: .78rem; line-height: 1.9; color: var(--text2); }
+    .t-prompt { color: var(--orange); } .t-cmd { color: var(--text); } .t-arg { color: var(--cyan); }
+    .t-out { color: #4caf50; } .t-dim { color: var(--dim); }
+
+    /* Sections */
+    section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-family: var(--mono); font-size: .7rem; letter-spacing: .2em; color: var(--orange); text-transform: uppercase; margin-bottom: 1rem; }
+    .section-title { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin-bottom: 1.2rem; }
+    .section-body { color: var(--text2); line-height: 1.7; max-width: 560px; font-size: 1.02rem; }
+
+    /* Features */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden; margin-top: 4rem;
+    }
+    .feat-card { background: var(--card); padding: 2rem; transition: background .2s; position: relative; overflow: hidden; }
+    .feat-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--orange); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
+    .feat-card:hover { background: var(--bg3); }
+    .feat-card:hover::after { transform: scaleX(1); }
+    .feat-icon { font-size: 1.6rem; margin-bottom: 1rem; display: block; }
+    .feat-title { font-weight: 700; font-size: 1rem; margin-bottom: .5rem; color: var(--text); }
+    .feat-desc { font-size: .87rem; color: var(--text2); line-height: 1.6; }
+
+    /* Pills */
+    .pill-section { margin-top: 5rem; }
+    .pill-section-title { font-family: var(--mono); font-size: .7rem; letter-spacing: .2em; color: var(--dim); text-transform: uppercase; margin-bottom: 1.2rem; }
+    .pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2.5rem; }
+    .pill { font-family: var(--mono); font-size: .72rem; padding: .3rem .75rem; border-radius: 3px; letter-spacing: .05em; }
+    .pill-orange { background: rgba(255,107,26,.12); color: var(--orange); border: 1px solid rgba(255,107,26,.2); }
+    .pill-cyan   { background: rgba(26,255,219,.08); color: var(--cyan);   border: 1px solid rgba(26,255,219,.15); }
+    .pill-dim    { background: rgba(255,255,255,.04); color: var(--text2); border: 1px solid var(--border); }
+
+    /* Presets */
+    .presets-section { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 6rem 2rem; }
+    .presets-inner { max-width: 1100px; margin: 0 auto; }
+    .presets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .75rem; margin-top: 3rem; }
+    .preset-item { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.2rem; transition: border-color .2s, transform .2s; display: flex; align-items: center; gap: .75rem; }
+    .preset-item:hover { border-color: var(--orange); transform: translateY(-2px); }
+    .preset-emoji { font-size: 1.2rem; flex-shrink: 0; }
+    .preset-name { font-size: .83rem; font-weight: 600; color: var(--text); }
+    .preset-spec { font-family: var(--mono); font-size: .65rem; color: var(--text2); margin-top: .15rem; }
+
+    /* Install */
+    .install-block { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 2.5rem; }
+    .install-tab { display: flex; border-bottom: 1px solid var(--border); }
+    .itab { font-family: var(--mono); font-size: .72rem; letter-spacing: .06em; color: var(--dim); padding: .7rem 1.2rem; border-bottom: 2px solid transparent; }
+    .itab.active { color: var(--orange); border-bottom-color: var(--orange); }
+    .install-body { padding: 1.5rem; font-family: var(--mono); font-size: .8rem; line-height: 2; color: var(--text2); }
+    .install-body .cmd { color: var(--cyan); }
+    .install-body .comment { color: var(--dim); }
+    .install-body .kw { color: var(--orange); }
+
+    /* HW accel */
+    .hw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 3rem; }
+    .hw-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
+    .hw-card-brand { font-size: .7rem; font-family: var(--mono); letter-spacing: .15em; color: var(--dim); text-transform: uppercase; margin-bottom: .6rem; }
+    .hw-card-name { font-weight: 700; font-size: .95rem; color: var(--text); margin-bottom: .4rem; }
+    .hw-card-codecs { display: flex; gap: .35rem; flex-wrap: wrap; margin-top: .6rem; }
+    .hw-badge { font-family: var(--mono); font-size: .62rem; padding: .2rem .5rem; border-radius: 3px; background: rgba(26,255,219,.07); color: var(--cyan); border: 1px solid rgba(26,255,219,.12); }
+
+    /* Stats */
+    .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 5rem 0 0; }
+    .stat-cell { background: var(--card); padding: 2rem 1.5rem; text-align: center; }
+    .stat-num { font-size: 2.8rem; font-weight: 800; color: var(--orange); line-height: 1; margin-bottom: .35rem; }
+    .stat-label { font-family: var(--mono); font-size: .68rem; letter-spacing: .12em; color: var(--dim); text-transform: uppercase; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--border); padding: 3rem 2rem; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: var(--mono); font-weight: 700; color: var(--orange); font-size: .88rem; }
+    .footer-meta { font-family: var(--mono); font-size: .72rem; color: var(--dim); }
+    .footer-links { display: flex; gap: 1.2rem; }
+    .footer-links a { font-family: var(--mono); font-size: .72rem; color: var(--text2); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--orange); }
+
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 640px) {
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .topbar-nav { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-logo">FFMPEX<span> /v2.4</span></div>
+    <nav class="topbar-nav">
+      <a href="#features">Features</a>
+      <a href="#formats">Formats</a>
+      <a href="#presets">Presets</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/shubh-ssj/ffmpex" target="_blank">★ GitHub</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <span class="hero-badge">✦ v2.4 — Open Source Python App</span>
+    <h1 class="hero-title"><span class="ff">FF</span>MPEX</h1>
+    <p class="hero-sub">// THE CLEAN FFMPEG GUI WRAPPER</p>
+    <p class="hero-desc">
+      Stop memorizing flags. FFmpex gives FFmpeg a polished dark-themed
+      interface — convert, compress, trim, and batch-process video &amp; audio
+      in seconds, with hardware acceleration and 30+ platform presets built in.
+    </p>
+    <div class="hero-ctas">
+      <a href="https://github.com/shubh-ssj/ffmpex/releases/latest" class="btn btn-primary">⬇ Download Now</a>
+      <a href="https://github.com/shubh-ssj/ffmpex" class="btn btn-ghost">⌥ View on GitHub</a>
+    </div>
+
+    <div class="terminal-wrap reveal">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          <span class="terminal-title">ffmpex — terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="t-prompt">$</span> <span class="t-cmd">python</span> <span class="t-arg">ffmpex_v2.py</span></div>
+          <div><span class="t-dim"># Launching FFmpex v2.4.0 ...</span></div>
+          <div><span class="t-out">✓ FFmpeg detected at /usr/bin/ffmpeg</span></div>
+          <div><span class="t-out">✓ Hardware encoder scan: NVENC, QSV available</span></div>
+          <div><span class="t-out">✓ Drag-and-drop: enabled (tkinterdnd2)</span></div>
+          <div><span class="t-out">✓ System tray: enabled (pystray)</span></div>
+          <div>&nbsp;</div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">python</span> <span class="t-arg">ffmpex_v2.py</span> <span class="t-arg">--version</span></div>
+          <div><span class="t-out">FFmpex 2.4.0  (Python 3.12.3)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div style="max-width:1100px;margin:0 auto;padding:0 2rem">
+    <div class="stats-strip reveal">
+      <div class="stat-cell"><div class="stat-num">16+</div><div class="stat-label">Video Formats</div></div>
+      <div class="stat-cell"><div class="stat-num">13+</div><div class="stat-label">Audio Formats</div></div>
+      <div class="stat-cell"><div class="stat-num">30+</div><div class="stat-label">Platform Presets</div></div>
+      <div class="stat-cell"><div class="stat-num">5</div><div class="stat-label">HW Accelerators</div></div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section id="features">
+    <p class="section-label reveal">// Core Features</p>
+    <h2 class="section-title reveal">Everything FFmpeg<br>can do — visually.</h2>
+    <p class="section-body reveal">A comprehensive dark-themed GUI that surfaces the full power of FFmpeg without requiring you to memorise a single flag. Built with CustomTkinter for a native, snappy feel on Windows, macOS, and Linux.</p>
+
+    <div class="features-grid reveal">
+      <div class="feat-card"><span class="feat-icon">🎬</span><div class="feat-title">Video Conversion</div><div class="feat-desc">Convert between all major containers — MP4, MKV, AVI, MOV, WebM, and 10+ more — with smart per-container codec defaults.</div></div>
+      <div class="feat-card"><span class="feat-icon">🎵</span><div class="feat-title">Audio Conversion</div><div class="feat-desc">Transcode to MP3, AAC, FLAC, Opus, WAV, ALAC, and more. Lossless-to-lossy, lossy-to-lossless — full bitrate control from 32k to 512k.</div></div>
+      <div class="feat-card"><span class="feat-icon">📦</span><div class="feat-title">Smart Compression</div><div class="feat-desc">Target-size presets for Discord, WhatsApp, Telegram, and more. CRF slider ranges from archive-quality (14) to smallest possible file (35).</div></div>
+      <div class="feat-card"><span class="feat-icon">⚡</span><div class="feat-title">Hardware Acceleration</div><div class="feat-desc">NVIDIA NVENC, AMD AMF, Intel QSV, Apple VideoToolbox, and Linux VAAPI — GPU encoding is automatically detected and offered.</div></div>
+      <div class="feat-card"><span class="feat-icon">🎯</span><div class="feat-title">Platform Presets</div><div class="feat-desc">One-click export settings for YouTube, TikTok, Instagram, Twitter, Plex, PS5, Xbox, Steam Deck, and 20+ more destinations.</div></div>
+      <div class="feat-card"><span class="feat-icon">🗂</span><div class="feat-title">Job Queue</div><div class="feat-desc">Queue multiple encoding jobs, run them sequentially with live ETA tracking, and get a desktop notification when the batch finishes.</div></div>
+      <div class="feat-card"><span class="feat-icon">🖱</span><div class="feat-title">Drag &amp; Drop</div><div class="feat-desc">Drop files directly onto the window to load them instantly. No file picker needed. Requires optional tkinterdnd2.</div></div>
+      <div class="feat-card"><span class="feat-icon">🎨</span><div class="feat-title">Custom Themes</div><div class="feat-desc">Multiple built-in color themes — Dracula, Nord, and more — built on CustomTkinter's flexible theming engine with full light/dark support.</div></div>
+      <div class="feat-card"><span class="feat-icon">📐</span><div class="feat-title">Resolution Scaling</div><div class="feat-desc">Scale from 240p all the way up to 8K using smart -2 padding to preserve aspect ratio. Codec quality flags adapt per-encoder automatically.</div></div>
+    </div>
+  </section>
+
+  <!-- Formats -->
+  <section id="formats">
+    <p class="section-label reveal">// Format Support</p>
+    <h2 class="section-title reveal">Every codec.<br>Every container.</h2>
+
+    <div class="pill-section reveal">
+      <p class="pill-section-title">Video Containers</p>
+      <div class="pills">
+        <span class="pill pill-orange">MP4</span><span class="pill pill-orange">MKV</span><span class="pill pill-orange">AVI</span>
+        <span class="pill pill-orange">MOV</span><span class="pill pill-orange">WebM</span><span class="pill pill-orange">FLV</span>
+        <span class="pill pill-orange">WMV</span><span class="pill pill-orange">M4V</span><span class="pill pill-orange">TS</span>
+        <span class="pill pill-orange">3GP</span><span class="pill pill-orange">MXF</span><span class="pill pill-orange">VOB</span>
+        <span class="pill pill-orange">DIVX</span><span class="pill pill-orange">MPG</span><span class="pill pill-orange">MPEG</span><span class="pill pill-orange">F4V</span>
+      </div>
+      <p class="pill-section-title">Audio Formats</p>
+      <div class="pills">
+        <span class="pill pill-cyan">MP3</span><span class="pill pill-cyan">AAC</span><span class="pill pill-cyan">FLAC</span>
+        <span class="pill pill-cyan">OGG</span><span class="pill pill-cyan">WAV</span><span class="pill pill-cyan">M4A</span>
+        <span class="pill pill-cyan">Opus</span><span class="pill pill-cyan">WMA</span><span class="pill pill-cyan">AC3</span>
+        <span class="pill pill-cyan">DTS</span><span class="pill pill-cyan">ALAC</span><span class="pill pill-cyan">AIFF</span><span class="pill pill-cyan">AMR</span>
+      </div>
+      <p class="pill-section-title">Video Codecs</p>
+      <div class="pills">
+        <span class="pill pill-dim">H.264 / AVC</span><span class="pill pill-dim">H.265 / HEVC</span>
+        <span class="pill pill-dim">AV1 (libaom)</span><span class="pill pill-dim">AV1 (SVT-AV1)</span>
+        <span class="pill pill-dim">VP9</span><span class="pill pill-dim">VP8</span>
+        <span class="pill pill-dim">ProRes 422</span><span class="pill pill-dim">DNxHD / DNxHR</span>
+        <span class="pill pill-dim">MPEG-2</span><span class="pill pill-dim">Theora</span><span class="pill pill-dim">Stream Copy</span>
+      </div>
+    </div>
+
+    <p class="section-label reveal" style="margin-top:4rem">// Hardware Acceleration</p>
+    <h2 class="section-title reveal" style="font-size:clamp(1.6rem,3.5vw,2.4rem)">GPU-accelerated encoding<br>on all major platforms.</h2>
+    <div class="hw-grid reveal">
+      <div class="hw-card"><div class="hw-card-brand">NVIDIA</div><div class="hw-card-name">NVENC</div><div class="hw-card-codecs"><span class="hw-badge">H.264</span><span class="hw-badge">H.265</span><span class="hw-badge">AV1 (RTX 40+)</span></div></div>
+      <div class="hw-card"><div class="hw-card-brand">AMD</div><div class="hw-card-name">AMF</div><div class="hw-card-codecs"><span class="hw-badge">H.264</span><span class="hw-badge">H.265</span><span class="hw-badge">AV1 (RX 7000+)</span></div></div>
+      <div class="hw-card"><div class="hw-card-brand">INTEL</div><div class="hw-card-name">Quick Sync (QSV)</div><div class="hw-card-codecs"><span class="hw-badge">H.264</span><span class="hw-badge">H.265</span><span class="hw-badge">AV1 (Arc)</span></div></div>
+      <div class="hw-card"><div class="hw-card-brand">APPLE</div><div class="hw-card-name">VideoToolbox</div><div class="hw-card-codecs"><span class="hw-badge">H.264</span><span class="hw-badge">H.265</span></div></div>
+      <div class="hw-card"><div class="hw-card-brand">LINUX</div><div class="hw-card-name">VAAPI</div><div class="hw-card-codecs"><span class="hw-badge">H.264</span><span class="hw-badge">H.265</span><span class="hw-badge">AV1</span></div></div>
+    </div>
+  </section>
+
+  <!-- Presets -->
+  <div class="presets-section" id="presets">
+    <div class="presets-inner">
+      <p class="section-label reveal">// Platform Presets</p>
+      <h2 class="section-title reveal">Export once.<br>Post anywhere.</h2>
+      <p class="section-body reveal">30+ built-in presets handle all the codec, bitrate, framerate, and scale settings for each platform — no guessing required.</p>
+      <div class="presets-grid reveal">
+        <div class="preset-item"><span class="preset-emoji">▶</span><div><div class="preset-name">YouTube 1080p</div><div class="preset-spec">H.264 · CRF 18 · 128k AAC</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">▶</span><div><div class="preset-name">YouTube 4K UHD</div><div class="preset-spec">H.264 · CRF 16 · 192k AAC</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">▶</span><div><div class="preset-name">YouTube Shorts</div><div class="preset-spec">9:16 · 60fps · fast-start</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📸</span><div><div class="preset-name">Instagram Reels</div><div class="preset-spec">1080×1920 · 30fps</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📸</span><div><div class="preset-name">Instagram Feed 1:1</div><div class="preset-spec">1080×1080 square pad</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🎵</span><div><div class="preset-name">TikTok</div><div class="preset-spec">9:16 · 30fps · 128k</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🐦</span><div><div class="preset-name">Twitter / X</div><div class="preset-spec">720p · H.264 main</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">💼</span><div><div class="preset-name">LinkedIn</div><div class="preset-spec">1080p · fast-start</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">👻</span><div><div class="preset-name">Snapchat</div><div class="preset-spec">9:16 · H.264 main 3.1</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📌</span><div><div class="preset-name">Pinterest</div><div class="preset-spec">9:16 · 30fps</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🤖</span><div><div class="preset-name">Reddit</div><div class="preset-spec">1080p · ≤15min limit</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🟣</span><div><div class="preset-name">Twitch Clip</div><div class="preset-spec">1080p60 · 192k AAC</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🎬</span><div><div class="preset-name">Vimeo HD</div><div class="preset-spec">H.264 · CRF 16 · slow</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🎬</span><div><div class="preset-name">Vimeo 4K</div><div class="preset-spec">4K · CRF 14 · 192k</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">💬</span><div><div class="preset-name">WhatsApp Status</div><div class="preset-spec">480p · ≤16MB · 30s cap</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📡</span><div><div class="preset-name">WeChat Moments</div><div class="preset-spec">720p · H.264 main</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📡</span><div><div class="preset-name">Facebook 1080p</div><div class="preset-spec">H.264 High · 128k</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📡</span><div><div class="preset-name">Facebook Reels</div><div class="preset-spec">9:16 · 30fps</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🎮</span><div><div class="preset-name">PlayStation 5</div><div class="preset-spec">1080p · H.264 High 4.1</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🎮</span><div><div class="preset-name">Xbox Series X/S</div><div class="preset-spec">1080p · H.264 High 4.2</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🎮</span><div><div class="preset-name">Nintendo Switch</div><div class="preset-spec">720p · Baseline 3.1</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🎮</span><div><div class="preset-name">Steam Deck</div><div class="preset-spec">1280×800 · High 4.0</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📺</span><div><div class="preset-name">Plex / Kodi 1080p</div><div class="preset-spec">H.264 · direct-play</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📺</span><div><div class="preset-name">Plex / Kodi 4K</div><div class="preset-spec">HEVC · MKV container</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🍓</span><div><div class="preset-name">Raspberry Pi</div><div class="preset-spec">720p · Baseline 3.0</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🥽</span><div><div class="preset-name">Meta Quest VR</div><div class="preset-spec">1080p · H.264 High 4.1</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">🚁</span><div><div class="preset-name">DJI / GoPro Archive</div><div class="preset-spec">4K · CRF 16 · slow</div></div></div>
+        <div class="preset-item"><span class="preset-emoji">📡</span><div><div class="preset-name">Broadcast H.264</div><div class="preset-spec">1080p · High 4.1 · OTT</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Install -->
+  <section id="install">
+    <p class="section-label reveal">// Installation</p>
+    <h2 class="section-title reveal">Up and running<br>in 60 seconds.</h2>
+    <p class="section-body reveal">FFmpex requires Python 3.9+ and an existing FFmpeg install. All GUI dependencies are on pip — optional extras unlock drag-and-drop, tray icon, and desktop notifications.</p>
+    <div class="install-block reveal">
+      <div class="install-tab"><span class="itab active">Quick Start</span></div>
+      <div class="install-body">
+        <div><span class="comment"># 1. Make sure FFmpeg is installed</span></div>
+        <div><span class="comment">#    Windows: winget install ffmpeg</span></div>
+        <div><span class="comment">#    macOS:   brew install ffmpeg</span></div>
+        <div><span class="comment">#    Linux:   sudo apt install ffmpeg</span></div>
+        <div>&nbsp;</div>
+        <div><span class="comment"># 2. Required dependencies</span></div>
+        <div><span class="kw">pip install</span> <span class="cmd">customtkinter pillow</span></div>
+        <div>&nbsp;</div>
+        <div><span class="comment"># 3. Optional extras</span></div>
+        <div><span class="kw">pip install</span> <span class="cmd">tkinterdnd2</span>  <span class="comment"># drag-and-drop</span></div>
+        <div><span class="kw">pip install</span> <span class="cmd">pystray</span>     <span class="comment"># system tray</span></div>
+        <div><span class="kw">pip install</span> <span class="cmd">plyer</span>       <span class="comment"># desktop notifications</span></div>
+        <div>&nbsp;</div>
+        <div><span class="comment"># 4. Run</span></div>
+        <div><span class="kw">python</span> <span class="cmd">ffmpex_v2.py</span></div>
+        <div>&nbsp;</div>
+        <div><span class="comment"># Override FFmpeg path at launch</span></div>
+        <div><span class="kw">python</span> <span class="cmd">ffmpex_v2.py</span> <span class="cmd">--ffmpeg /custom/path/ffmpeg</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">FFMPEX</div>
+    <div class="footer-meta">v2.4.0 · MIT License · Python 3.9+</div>
+    <div class="footer-links">
+      <a href="https://github.com/shubh-ssj" target="_blank">Profile</a>
+      <a href="https://github.com/shubh-ssj/ffmpex">Repo</a>
+      <a href="https://github.com/shubh-ssj/ffmpex/releases">Releases</a>
+    </div>
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => io.observe(el));
+    setTimeout(() => {
+      document.querySelectorAll('.hero .reveal, .stats-strip').forEach(el => el.classList.add('in-view'));
+    }, 100);
+  </script>
+</body>
+</html>
