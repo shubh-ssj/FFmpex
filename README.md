@@ -52,6 +52,11 @@ FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim
 
 ---
 
+<p align="center">
+<img width="1280" height="687" alt="GIF" src="https://github.com/user-attachments/assets/a88302da-286c-4602-b400-2ed36c32b0f5" />
+</p>
+
+
 ## Hardware Acceleration
 
 | Vendor | Encoder | Supported Codecs |
