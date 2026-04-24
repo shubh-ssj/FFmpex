@@ -35,10 +35,13 @@ FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim
 
 ---
 <p align="center">
-<img width="48%" alt="image" src="https://github.com/user-attachments/assets/b0f0ff2b-493a-48c9-9e59-5229c498bacf" />
-&nbsp;
-<img width="48% alt="image" src="https://github.com/user-attachments/assets/fa0b5474-641a-4d1a-bd74-8d8a501d78a2" />
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/a68a8d22-16b1-45fc-97f8-d326d5ef3e79" />
 </p>
+
+<p align="center">
+<img width="100%" alt="Untitled-3 copy" src="https://github.com/user-attachments/assets/13375bf2-a8ea-471f-8ab5-a62452377aaa" />
+</p>
+
 ## Format Support
 
 **Video Containers:** MP4, MKV, AVI, MOV, WebM, FLV, WMV, M4V, TS, 3GP, MXF, VOB, DIVX, MPG, MPEG, F4V
