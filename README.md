@@ -1,6 +1,8 @@
 <h1 align="center"> # FFmpex — The Clean FFmpeg GUI </h1>
 
-> Stop memorizing flags. FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim, and batch-process video & audio in seconds, with hardware acceleration and 30+ platform presets built in.
+<p align="center"><em>Stop memorizing flags...</em></p>
+
+FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim, and batch-process video & audio in seconds, with hardware acceleration and 30+ platform presets built in.
 
 <img width="1920" height="1030" alt="image" src="https://github.com/user-attachments/assets/b253e2f0-f0d8-401b-b988-ade65492a3e8" />
 
