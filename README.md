@@ -4,9 +4,15 @@
 
 FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim, and batch-process video & audio in seconds, with hardware acceleration and 30+ platform presets built in.
 
-[![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-orange.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
+<p align="center">
+  <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">
+    <img src="https://img.shields.io/badge/License-GPL_v2-orange.svg" />
+  </a>
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/Python-3.9%2B-blue.svg" />
+  </a>
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg" />
+</p>
 
 <img width="1920" height="1030" alt="image" src="https://github.com/user-attachments/assets/b253e2f0-f0d8-401b-b988-ade65492a3e8" />
 
