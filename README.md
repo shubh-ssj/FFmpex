@@ -86,7 +86,7 @@ FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim
 <img width="32%" alt="image" src="https://github.com/user-attachments/assets/82adbb19-4849-4197-b4e5-169886cd031b" />
 </p>
 
-<p align="center">
+<p>
   <em>Gruvbox Dark &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Light Sepia &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Synthwave '84 Cyan</em>
 </p>
 
