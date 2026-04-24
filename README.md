@@ -34,7 +34,11 @@ FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim
 - 📐 **Resolution Scaling** — 240p to 8K with smart padding to preserve aspect ratio
 
 ---
-
+<p align="center">
+<img width="48%" alt="image" src="https://github.com/user-attachments/assets/b0f0ff2b-493a-48c9-9e59-5229c498bacf" />
+&nbsp;
+<img width="48% alt="image" src="https://github.com/user-attachments/assets/fa0b5474-641a-4d1a-bd74-8d8a501d78a2" />
+</p>
 ## Format Support
 
 **Video Containers:** MP4, MKV, AVI, MOV, WebM, FLV, WMV, M4V, TS, 3GP, MXF, VOB, DIVX, MPG, MPEG, F4V
