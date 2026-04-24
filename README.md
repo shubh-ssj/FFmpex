@@ -13,9 +13,9 @@ FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim
   </a>
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg" />
 </p>
-
-<img width="1920" height="1030" alt="image" src="https://github.com/user-attachments/assets/b253e2f0-f0d8-401b-b988-ade65492a3e8" />
-
+<p align="center">
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/b253e2f0-f0d8-401b-b988-ade65492a3e8" />
+</p>
 
 
 
