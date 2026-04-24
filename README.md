@@ -1,4 +1,4 @@
-# FFmpex — The Clean FFmpeg GUI
+<h1 align="center"> # FFmpex — The Clean FFmpeg GUI </h1>
 
 > Stop memorizing flags. FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim, and batch-process video & audio in seconds, with hardware acceleration and 30+ platform presets built in.
 
