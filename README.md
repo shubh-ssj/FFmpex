@@ -78,13 +78,13 @@ FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim
 
 ## Themes
 
-> 3 of 21 available themes — switch instantly from Settings.
+3 of 21 available themes — switch instantly from Settings.
 
 <p align="center">
 <img width="32%" alt="image" src="https://github.com/user-attachments/assets/6682afd9-d1df-4861-aa67-de7b6abf0317" />
 <img width="32%" alt="image" src="https://github.com/user-attachments/assets/2295dcc3-d326-498f-9c19-22cf884ad5aa" />
 <img width="32%" alt="image" src="https://github.com/user-attachments/assets/82adbb19-4849-4197-b4e5-169886cd031b" />
-
+</p>
 
 
 
