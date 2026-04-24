@@ -67,8 +67,13 @@ FFmpex gives FFmpeg a polished dark-themed interface — convert, compress, trim
 | Apple | VideoToolbox | H.264, H.265 |
 | Linux | VAAPI | H.264, H.265, AV1 |
 
+
 ---
 
+<p align="center">
+<img width="1596" height="1003" alt="image" src="https://github.com/user-attachments/assets/fa8a827c-f4ce-4d58-98a9-74ca30376725" />
+</p>
+  
 ## Installation
 
 **Requirements:** Python 3.9+ and FFmpeg installed on your system.
