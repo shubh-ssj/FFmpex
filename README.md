@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/shubh-ssj/pixarchive/main/assets/banner.svg" width="100%" alt="FFmpex Banner"/>
+  <img src="https://raw.githubusercontent.com/shubh-ssj/Ffmpex/main/assets/banner.svg" width="100%" alt="FFmpex Banner"/>
   
   <br/><br/>
 
