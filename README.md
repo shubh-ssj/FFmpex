@@ -1,3 +1,8 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/shubh-ssj/pixarchive/main/assets/banner.svg" width="100%" alt="FFmpex Banner"/>
+  
+  <br/><br/>
+
 <h1 align="center"> # FFmpex — The Clean FFmpeg GUI </h1>
 
 <p align="center"><em>Stop memorizing flags...</em></p>
